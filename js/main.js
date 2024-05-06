@@ -1,5 +1,7 @@
-// Objeto 
+
 const calculadora = {
+  resultados: [], // array para almacenar los resultados de las operaciones
+
   sumar: function(a, b) {
     return a + b;
   },
@@ -18,27 +20,48 @@ const calculadora = {
   },
 
   obtenerOperacion: function() {
-    const operacion = parseInt(prompt("Seleccione una operación:\n1. Sumar\n2. Restar\n3. Multiplicar\n4. Dividir\n5. Salir"));
+    const operacion = parseInt(prompt("Seleccione una operación:\n1. Sumar\n2. Restar\n3. Multiplicar\n4. Dividir\n5. Operación personalizada\n6. Ver resultados\n7. Salir"));
 
-    if (operacion < 1 || operacion > 5 || isNaN(operacion)) {
-      alert("Opción inválida. Por favor, seleccione un número del 1 al 5.");
+    if (operacion < 1 || operacion > 7 || isNaN(operacion)) {
+      alert("Opción inválida. Por favor, seleccione un número del 1 al 7.");
       return this.obtenerOperacion(); // Utilizamos 'this' para referirnos al objeto calculadora
     } else {
       return operacion;
     }
   },
+
+  operacionPersonalizada: function() {
+    const expresion = prompt("Ingrese una expresión matemática con 'a' y 'b' como variables (por ejemplo: 'a * b + 2'):");
+    const funcionPersonalizada = new Function('a', 'b', `return ${expresion};`);
+    return funcionPersonalizada;
+  },
+
+  verResultados: function() {
+    if (this.resultados.length === 0) {
+      alert("No hay resultados para mostrar.");
+    } else {
+      alert("Resultados:\n" + this.resultados.join("\n"));
+    }
+  },
+
   calcular: function() {
     let continuar = true;
 
     do {
       const operacion = this.obtenerOperacion();
 
-      if (operacion === 5) {
+      if (operacion === 7) {
         alert("Gracias por utilizar la calculadora 2.0");
         continuar = false;
+      } else if (operacion === 6) {
+        this.verResultados();
       } else {
-        let num1 = parseInt(prompt("Ingresa el primer número"));
-        let num2 = parseInt(prompt("Ingresa el segundo número"));
+        let num1, num2;
+
+        if (operacion !== 5) {
+          num1 = parseInt(prompt("Ingresa el primer número"));
+          num2 = parseInt(prompt("Ingresa el segundo número"));
+        }
 
         let resultado;
 
@@ -55,10 +78,15 @@ const calculadora = {
           case 4:
             resultado = this.dividir(num1, num2);
             break;
+          case 5:
+            const operacionPersonalizada = this.operacionPersonalizada();
+            resultado = operacionPersonalizada(num1, num2);
+            break;
           default:
             resultado = "Operación no válida";
         }
         alert("El resultado es: " + resultado);
+        this.resultados.push(resultado);// con esto guardamos el resultado en array resultados.
       }
     } while (continuar);
   }
